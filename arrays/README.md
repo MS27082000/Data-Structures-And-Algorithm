@@ -11,6 +11,7 @@ Active recall: open the link, solve from scratch, then check the notes.
 | 3 | [Second Largest](SecondLargestElement.md) | [GfG](https://www.geeksforgeeks.org/problems/second-largest3735/1) | Two variables | O(n) | O(1) |
 | 4 | [Max Consecutive Ones](MaxConsecutiveOnes.md) | [LC 485](https://leetcode.com/problems/max-consecutive-ones/) | Running count | O(n) | O(1) |
 | 5 | [Left Rotate by One](LeftRotateByOne.md) | [GfG](https://www.geeksforgeeks.org/problems/cyclically-rotate-an-array-by-one2614/1) | Shift | O(n) | O(1) |
+| 5b | [Right Rotate by One](RightRotateByOne.md) | [GfG](https://www.geeksforgeeks.org/problems/cyclically-rotate-an-array-by-one2614/1) | Shift from the back | O(n) | O(1) |
 | 6 | [Left Rotate by K](LeftRotateByK.md) | [LC 189](https://leetcode.com/problems/rotate-array/) | Triple reversal | O(n) | O(1) |
 | 7 | [Missing Number](FindMissingNumber.md) | [LC 268](https://leetcode.com/problems/missing-number/) | XOR / sum | O(n) | O(1) |
 | 8 | [Majority Element I](MajorityElementI.md) | [LC 169](https://leetcode.com/problems/majority-element/) | Boyer-Moore | O(n) | O(1) |
