@@ -1,14 +1,33 @@
-/** Majority Element (LC 169): element appearing more than n/2 times (guaranteed to exist) */
+/**
+ * Majority Element (LC 169): the element that appears MORE than n/2 times (guaranteed to exist).
+ *
+ * Boyer-Moore Voting: think of it as an election.
+ * Keep one candidate and a count of "votes" for them.
+ *   - same number as the candidate  -> +1 vote
+ *   - different number              -> -1 vote (one vote gets cancelled)
+ *   - votes hit 0                   -> the next number becomes the new candidate
+ * The majority element has more than half of all votes, so it can never be fully cancelled.
+ *
+ * Time O(n), space O(1).
+ */
 public class MajorityElementI {
 
-    // Boyer-Moore Voting: O(n) time, O(1) space
     static int majorityElement(int[] nums) {
-        int candidate = 0, count = 0;
+        int candidate = 0;
+        int count = 0;
+
         for (int x : nums) {
-            if (count == 0) candidate = x;
-            count += (x == candidate) ? 1 : -1;
+            if (count == 0) {
+                candidate = x;      // no candidate left, so pick the current number
+            }
+
+            if (x == candidate) {
+                count++;            // a vote for the candidate
+            } else {
+                count--;            // a vote against the candidate
+            }
         }
-        return candidate;   // valid because a majority is guaranteed; otherwise verify with a 2nd pass
+        return candidate;
     }
 
     public static void main(String[] args) {
