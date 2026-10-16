@@ -1,31 +1,56 @@
 import java.util.ArrayList;
 import java.util.List;
 
-/** Majority Element II (LC 229): all elements appearing more than n/3 times */
+/**
+ * Majority Element II (LC 229): all elements appearing MORE than n/3 times.
+ *
+ * At most 2 elements can appear more than n/3 times, so we keep 2 candidates, each with its own vote count
+ * (extended Boyer-Moore voting).
+ *
+ * Time O(n), space O(1).
+ */
 public class MajorityElementII {
 
-    // Extended Boyer-Moore with 2 candidates (at most 2 elements can exceed n/3). O(n) time, O(1) space
     static List<Integer> majorityElement(int[] nums) {
-        int c1 = 0, c2 = 0, n1 = Integer.MIN_VALUE, n2 = Integer.MIN_VALUE;
+        int candidate1 = Integer.MIN_VALUE;
+        int candidate2 = Integer.MIN_VALUE;
+        int count1 = 0;
+        int count2 = 0;
+
+        // Pass 1: find the (at most) two possible candidates.
         for (int x : nums) {
-            if (x == n1) c1++;
-            else if (x == n2) c2++;
-            else if (c1 == 0) { n1 = x; c1 = 1; }
-            else if (c2 == 0) { n2 = x; c2 = 1; }
-            else { c1--; c2--; }
+            if (x == candidate1) {
+                count1++;                       // vote for candidate1
+            } else if (x == candidate2) {
+                count2++;                       // vote for candidate2
+            } else if (count1 == 0) {
+                candidate1 = x;                 // candidate1 slot is free, take it
+                count1 = 1;
+            } else if (count2 == 0) {
+                candidate2 = x;                 // candidate2 slot is free, take it
+                count2 = 1;
+            } else {
+                count1--;                       // x is different from both: cancels one vote of each
+                count2--;
+            }
         }
-        // Verification pass is mandatory: candidates may not actually qualify
-        c1 = 0;
-        c2 = 0;
+
+        // Pass 2: the candidates might not really appear more than n/3 times, so count them again.
+        count1 = 0;
+        count2 = 0;
         for (int x : nums) {
-            if (x == n1) c1++;
-            else if (x == n2) c2++;
+            if (x == candidate1) {
+                count1++;
+            } else if (x == candidate2) {
+                count2++;
+            }
         }
-        List<Integer> res = new ArrayList<>();
+
+        List<Integer> result = new ArrayList<>();
         int limit = nums.length / 3;
-        if (c1 > limit) res.add(n1);
-        if (c2 > limit) res.add(n2);
-        return res;
+        if (count1 > limit) result.add(candidate1);
+        if (count2 > limit) result.add(candidate2);
+        return result;
     }
 
     public static void main(String[] args) {
