@@ -1,27 +1,53 @@
-/** Max Consecutive Ones III (LC 1004): longest subarray of 1s after flipping at most k zeros */
+/**
+ * Max Consecutive Ones III (LC 1004): longest subarray of 1s after flipping at most k zeros.
+ *
+ * "Flip at most k zeros" = "the window may contain at most k zeros".
+ * So we find the LONGEST WINDOW with at most k zeros.
+ *
+ *   State to track      : zeros = number of zeros inside the window
+ *   Window is invalid   : zeros > k
+ *   When left leaves    : if nums[left] == 0, zeros--
+ *
+ * Time O(n), space O(1).
+ */
 public class MaxConsecutiveOnesIII {
 
-    // Longest window containing at most k zeros. O(n) time, O(1) space
     static int longestOnes(int[] nums, int k) {
-        int left = 0, zeros = 0, best = 0;
+        int left = 0;
+        int zeros = 0;
+        int maxLen = 0;
+
         for (int right = 0; right < nums.length; right++) {
-            if (nums[right] == 0) zeros++;
-            while (zeros > k) {                                  // too many zeros: shrink
-                if (nums[left] == 0) zeros--;
+            if (nums[right] == 0) {
+                zeros++;                          // a new cell enters the window
+            }
+
+            while (zeros > k) {                   // too many zeros: shrink from the left
+                if (nums[left] == 0) {
+                    zeros--;                      // the cell leaving was a zero
+                }
                 left++;
             }
-            best = Math.max(best, right - left + 1);
+
+            maxLen = Math.max(maxLen, right - left + 1);   // window is valid here
         }
-        return best;
+        return maxLen;
     }
 
-    // Non-shrinking variant: the window never gets smaller, it only slides, so its final size is the answer. O(n)
+    // Non-shrinking variant: `if` instead of `while`. The window never gets smaller, it only slides,
+    // so its final size (n - left) is the answer. Same O(n), simpler code.
     static int longestOnesNoShrink(int[] nums, int k) {
-        int left = 0, zeros = 0;
+        int left = 0;
+        int zeros = 0;
+
         for (int right = 0; right < nums.length; right++) {
-            if (nums[right] == 0) zeros++;
-            if (zeros > k) {                                     // `if`, not `while`: slide by exactly one
-                if (nums[left] == 0) zeros--;
+            if (nums[right] == 0) {
+                zeros++;
+            }
+            if (zeros > k) {                      // slide by exactly one step
+                if (nums[left] == 0) {
+                    zeros--;
+                }
                 left++;
             }
         }
@@ -33,6 +59,7 @@ public class MaxConsecutiveOnesIII {
         System.out.println(longestOnes(new int[]{0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1}, 3)); // 10
         System.out.println(longestOnes(new int[]{0, 0, 0}, 0));                                                 // 0
         System.out.println(longestOnes(new int[]{1, 1, 1}, 0));                                                 // 3
+        System.out.println(longestOnes(new int[]{1, 1, 0, 0, 1}, 1));                                           // 3
         System.out.println(longestOnesNoShrink(new int[]{1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0}, 2));                 // 6
     }
 }
