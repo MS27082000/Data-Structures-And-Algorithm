@@ -7,6 +7,32 @@
 
 **Intuition:** "At most k distinct" is a monotonic condition. Shrinking a valid window keeps it valid, which is exactly what sliding window needs.
 
+## Code
+
+```java
+if (k == 0) return 0;
+
+Map<Character, Integer> map = new HashMap<>();
+int maxLen = 0, left = 0;
+
+for (int right = 0; right < s.length(); right++) {
+    char r = s.charAt(right);
+    map.put(r, map.getOrDefault(r, 0) + 1);            // 1. add
+
+    while (map.size() > k) {                           // 2. shrink
+        char l = s.charAt(left);
+        map.put(l, map.get(l) - 1);
+        if (map.get(l) == 0) map.remove(l);
+        left++;
+    }
+
+    maxLen = Math.max(maxLen, right - left + 1);       // 3. update
+}
+return maxLen;
+```
+
+**Order matters:** add, then shrink, then update. Shrinking before adding lets the window hold `k + 1` characters when you update `maxLen`.
+
 **Complexity:** Time O(n), Space O(k).
 
 **Edge cases:** `k = 0` (answer 0), `k` larger than the number of distinct characters (whole string), empty string, a single character.
