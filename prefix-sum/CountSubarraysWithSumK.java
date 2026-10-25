@@ -1,21 +1,38 @@
 import java.util.HashMap;
 import java.util.Map;
 
-/** Subarray Sum Equals K (LC 560): count subarrays with sum exactly k (negatives allowed) */
+/**
+ * Subarray Sum Equals K (LC 560): count the subarrays with sum exactly k (negatives allowed).
+ *
+ * Formula: sum of subarray (j+1 .. i) = prefix[i] - prefix[j].
+ * We want this to be k, so prefix[j] must be prefix[i] - k. prefix[i] is known, so we search for prefix[j].
+ *
+ * The map stores: prefix sum -> HOW MANY TIMES it appeared.
+ * Each earlier occurrence of (prefixSum - k) is a different start, so it gives a different subarray ending at i.
+ *
+ * Time O(n), space O(n).
+ */
 public class CountSubarraysWithSumK {
 
-    // Prefix sum + HashMap of COUNTS of each prefix. For each i, add count(prefix - k). O(n) time, O(n) space
     static int subarraySum(int[] nums, int k) {
-        Map<Long, Integer> count = new HashMap<>();
-        count.put(0L, 1);                          // empty prefix
-        long prefix = 0;
-        int total = 0;
-        for (int x : nums) {
-            prefix += x;
-            total += count.getOrDefault(prefix - k, 0);   // look up BEFORE adding the current prefix
-            count.merge(prefix, 1, Integer::sum);
+        Map<Long, Integer> map = new HashMap<>();
+        map.put(0L, 1);                               // the empty prefix (sum 0) has appeared once
+        long prefixSum = 0;
+        int count = 0;
+
+        for (int i = 0; i < nums.length; i++) {
+            prefixSum += nums[i];
+
+            // how many earlier prefixes equal (prefixSum - k)? Each one is a valid subarray ending at i.
+            // Look up BEFORE inserting the current prefix.
+            if (map.containsKey(prefixSum - k)) {
+                count += map.get(prefixSum - k);
+            }
+
+            // record the current prefix
+            map.put(prefixSum, map.getOrDefault(prefixSum, 0) + 1);
         }
-        return total;
+        return count;
     }
 
     public static void main(String[] args) {

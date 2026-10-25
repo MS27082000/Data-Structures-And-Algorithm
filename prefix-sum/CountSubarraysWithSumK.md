@@ -84,17 +84,21 @@ Example `[5]`, `k = 0`: prefix is `5`, need is `5`. If `5` is already inserted, 
 ## 6. Code
 
 ```java
-Map<Long, Integer> count = new HashMap<>();
-count.put(0L, 1);                                        // (a) seed
-long prefix = 0;
-int total = 0;
+Map<Long, Integer> map = new HashMap<>();
+map.put(0L, 1);                                          // (a) seed
+long prefixSum = 0;
+int count = 0;
 
-for (int x : nums) {
-    prefix += x;
-    total += count.getOrDefault(prefix - k, 0);          // (b) look up first
-    count.merge(prefix, 1, Integer::sum);                //     then insert
+for (int i = 0; i < nums.length; i++) {
+    prefixSum += nums[i];
+
+    if (map.containsKey(prefixSum - k)) {                // (b) look up first
+        count += map.get(prefixSum - k);
+    }
+
+    map.put(prefixSum, map.getOrDefault(prefixSum, 0) + 1);   // then insert
 }
-return total;
+return count;
 ```
 
 ## 7. Dry run: `[1, 2, 3]`, `k = 3`
@@ -102,9 +106,9 @@ return total;
 ```
 map = {0:1}
 
-x=1  prefix=1  need = 1−3 = −2  not in map   total=0   map={0:1, 1:1}
-x=2  prefix=3  need = 3−3 = 0   count 1      total=1   map={0:1, 1:1, 3:1}     ([1,2])
-x=3  prefix=6  need = 6−3 = 3   count 1      total=2   map={0:1, 1:1, 3:1, 6:1} ([3])
+x=1  prefix=1  need = 1−3 = −2  not in map   count=0   map={0:1, 1:1}
+x=2  prefix=3  need = 3−3 = 0   found 1x     count=1   map={0:1, 1:1, 3:1}     ([1,2])
+x=3  prefix=6  need = 6−3 = 3   found 1x     count=2   map={0:1, 1:1, 3:1, 6:1} ([3])
 ```
 
 Answer: `2`.
@@ -114,7 +118,7 @@ Answer: `2`.
 | Question | Map value | On a match |
 |---|---|---|
 | Longest subarray with sum `k` | **first index** of the prefix | `maxLen = max(maxLen, i − index)` |
-| Count subarrays with sum `k` | **count** of the prefix | `total += count` |
+| Count subarrays with sum `k` | **count** of the prefix | `count += map.get(need)` |
 
 The prefix-sum idea is identical. Only what you store, and what you do on a match, changes.
 

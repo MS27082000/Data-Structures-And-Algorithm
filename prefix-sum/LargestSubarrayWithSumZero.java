@@ -1,23 +1,37 @@
 import java.util.HashMap;
 import java.util.Map;
 
-/** Largest Subarray with Sum 0 */
+/**
+ * Largest Subarray with Sum 0.
+ *
+ * This is "Longest Subarray with Sum K" with k = 0.
+ * (prefixSum - k) becomes prefixSum, so we ask: "have I seen this same prefix sum before?"
+ * If yes, the elements between the two positions add up to 0.
+ *
+ * The map stores: prefix sum -> FIRST index where it appeared.
+ *
+ * Time O(n), space O(n).
+ */
 public class LargestSubarrayWithSumZero {
 
-    // Same prefix-sum idea with k = 0: if the same prefix appears twice, the elements between sum to 0.
-    // O(n) time, O(n) space
-    static int maxLen(int[] a) {
-        Map<Long, Integer> first = new HashMap<>();
-        first.put(0L, -1);
-        long prefix = 0;
-        int best = 0;
-        for (int i = 0; i < a.length; i++) {
-            prefix += a[i];
-            Integer j = first.get(prefix);
-            if (j != null) best = Math.max(best, i - j);
-            else first.put(prefix, i);             // store only the first occurrence
+    static int maxLen(int[] arr) {
+        Map<Long, Integer> map = new HashMap<>();
+        map.put(0L, -1);                              // prefix 0 before index 0
+        long prefixSum = 0;
+        int maxLen = 0;
+
+        for (int i = 0; i < arr.length; i++) {
+            prefixSum += arr[i];
+
+            if (map.containsKey(prefixSum)) {
+                // seen before: the stretch between that index and i sums to 0
+                int length = i - map.get(prefixSum);
+                maxLen = Math.max(maxLen, length);
+            } else {
+                map.put(prefixSum, i);                // store only the FIRST index
+            }
         }
-        return best;
+        return maxLen;
     }
 
     public static void main(String[] args) {
