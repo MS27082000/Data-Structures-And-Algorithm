@@ -1,22 +1,82 @@
 # Longest Repeating Character Replacement (LC 424)
 
-**Problem:** An uppercase string and an integer `k`. You may replace at most `k` characters with any letter. Return the length of the longest substring of one repeated letter.
+**Problem:** String `s` of uppercase letters, and `k`. You can change at most `k` letters to any letter. Return the length of the longest substring of one repeated letter you can get.
 
-**Brute force:** For each substring, count the most frequent letter and check `length − maxFreq ≤ k` → O(n²) to O(n³).
-**Optimal:** Sliding window. A window is **valid** if `(window length − count of the most frequent letter) ≤ k`, i.e. the number of characters to replace is at most `k` → O(n), O(26).
+`"AABABBA"`, `k = 1` → `4`
 
-**The maxFreq trick:** Maintain `maxFreq` as the highest count seen in **any** window so far and **never decrease it**. We only care about windows **larger** than the best so far, and a bigger window needs a bigger `maxFreq`. A stale `maxFreq` can't produce a longer wrong answer because the window never grows without a real increase in `maxFreq`. The window slides (by `if`, not `while`).
+## Idea
 
-**Intuition:** In any window, keep the most frequent letter and replace the rest. The replacements needed are `length − maxFreq`.
+In a window, keep the most frequent letter and change the rest:
 
-**Complexity:** Time O(n), Space O(1).
+```
+changes needed = window length - maxFreq
+```
 
-**Edge cases:** `k = 0` (longest run), `k ≥ n − 1` (whole string), all distinct letters, single character.
+The window is valid if `changes needed <= k`. Find the **longest valid window**.
 
-**Interview traps**
-- The safe version recomputes the max count each time (O(26 n)). Mention it first, then optimise.
-- Explaining **why `maxFreq` need not shrink** is the common follow-up.
-- Condition is `length − maxFreq > k` to shrink.
-- Letters are `'A'..'Z'`, so a 26-array suffices.
+## Brute force: O(n²)
 
-**How to explain:** "A window is fine if the number of characters other than its most frequent letter is at most k. I expand right, and when the window needs more than k replacements I slide the left edge by one."
+For every start `i`, extend `j`. Keep letter counts and `maxFreq`. If the window is valid, update the best length. If not, stop extending.
+
+## Sliding window: O(n)
+
+One window, one `freq[26]` array.
+
+| Question | Answer |
+|---|---|
+| State | `freq[26]`, `maxFreq` |
+| Invalid when | `(right - left + 1) - maxFreq > k` |
+| When `left` leaves | `freq[s[left]]--` |
+
+Steps:
+1. **Add** `s[right]`, update `maxFreq`.
+2. **While** invalid: `freq[s[left]]--`, `left++`.
+3. **Update** `maxLen = max(maxLen, right - left + 1)`.
+
+## Code
+
+```java
+int[] freq = new int[26];
+int left = 0, maxLen = 0, maxFreq = 0;
+
+for (int right = 0; right < s.length(); right++) {
+    char ch = s.charAt(right);
+    freq[ch - 'A']++;
+    maxFreq = Math.max(maxFreq, freq[ch - 'A']);
+
+    while ((right - left + 1) - maxFreq > k) {
+        freq[s.charAt(left) - 'A']--;
+        left++;
+    }
+
+    maxLen = Math.max(maxLen, right - left + 1);
+}
+return maxLen;
+```
+
+## Dry run: `"AABABBA"`, `k = 1`
+
+```
+right=0 'A'  A=1          maxFreq=1  length 1  changes 0  valid    maxLen=1
+right=1 'A'  A=2          maxFreq=2  length 2  changes 0  valid    maxLen=2
+right=2 'B'  A=2,B=1      maxFreq=2  length 3  changes 1  valid    maxLen=3
+right=3 'A'  A=3,B=1      maxFreq=3  length 4  changes 1  valid    maxLen=4
+right=4 'B'  A=3,B=2      maxFreq=3  length 5  changes 2 > 1 → remove s[0]='A', left=1
+                                     length 4  changes 1  valid    maxLen=4
+right=5 'B'  A=2,B=3      maxFreq=3  length 5  changes 2 > 1 → remove s[1]='A', left=2
+                                     length 4  changes 1  valid    maxLen=4
+right=6 'A'  A=2,B=3      maxFreq=3  length 5  changes 2 > 1 → remove s[2]='B', left=3
+                                     length 4  changes 1  valid    maxLen=4
+```
+
+Answer: `4`.
+
+## Why `maxFreq` is never decreased
+
+When `left` leaves, `maxFreq` may become too big for the window. That's fine. The answer can only grow when `maxFreq` gets a **new bigger** value, so a stale `maxFreq` can't give a wrong, longer answer.
+
+**Complexity:** time O(n), space O(26).
+
+**Edge cases:** `k = 0` (longest run of one letter), `k >= n` (the whole string), a single letter.
+
+**How to explain:** "A window needs `length - maxFreq` changes. I grow the window, and when it needs more than `k` changes I shrink it from the left, tracking the longest valid window."
