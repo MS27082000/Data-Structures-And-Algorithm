@@ -3,30 +3,119 @@
 Source: Striver's A2Z DSA Sheet, Binary Search section (32 items). Active recall: open the link, solve from scratch, then check the notes.
 
 ## When to use
-- Sorted or monotonic data, and an O(log n) requirement
-- "Minimise the maximum" or "maximise the minimum" → **binary search on the answer**
-- Any yes/no condition that flips only once (`false … false true … true`)
+
+Binary search works when you can throw away **half** of the options after one check. That happens in three situations.
+
+### 1. Sorted data
+`[1, 3, 5, 7, 9]`. Look at the middle, and the target is either left or right of it.
+
+### 2. Monotonic data
+**Monotonic** means the values only go in **one direction**: they never go up and then down. (Non-decreasing or non-increasing.)
+
+- `[1, 2, 2, 5, 9]` is monotonic (never goes down).
+- `[1, 5, 3, 8]` is **not** monotonic.
+
+It doesn't have to be an array. Hours Koko needs to eat all bananas, as her eating speed grows:
+
+| Speed | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|---|
+| Hours needed | 27 | 15 | 10 | 8 | 8 | 6 |
+
+The hours never go up when the speed goes up, so this is monotonic. That is enough for binary search.
+
+### 3. A yes/no condition that flips only once
+Write a check `cond(x)` that answers yes or no. It must look like `no no no no yes yes yes`, with **one** switch point and no switching back.
+
+Example: array `[2, 4, 7, 9, 12]`, `cond(i)` = "is `a[i] >= 7`?"
+
+```
+index   0     1     2     3     4
+value   2     4     7     9     12
+cond    no    no    yes   yes   yes
+```
+
+Binary search finds the **first yes** (index 2) without checking every index.
+
+Another one: "can Koko finish in 8 hours at speed `x`?" gives `no no no yes yes yes` for `x = 1, 2, 3, 4, 5, 6`. The first yes (`x = 4`) is the answer.
+
+### "Minimise the maximum" and "maximise the minimum"
+These words mean: **binary search on the answer** (see below).
+
+**Minimise the maximum.** Example: split `[7, 2, 5, 10, 8]` into `k = 2` parts so that the **largest part sum is as small as possible**.
+- Guess a value `X` for the largest allowed part sum. Question: "can we split into at most 2 parts, each with sum `<= X`?"
+- Small `X` (like 10): no. Big `X` (like 40): yes. So it looks like `no no no yes yes yes`.
+- We want the **smallest** `X` that says yes. That is 18.
+
+**Maximise the minimum.** Example: place `k` cows in stalls so that the **smallest distance** between any two cows is as large as possible.
+- Guess a distance `d`. Question: "can we place all cows with every gap `>= d`?"
+- Small `d`: yes. Big `d`: no. So it looks like `yes yes yes no no no`.
+- We want the **largest** `d` that says yes.
 
 ## Two templates to memorise
+
+### Template 1: first index where the condition is true
+Use it for: lower bound, first occurrence, boundaries, and binary search on the answer.
+
 ```java
-// 1) First index where cond(i) is true (lower bound style). high = n is allowed.
-int low = 0, high = n;
+int low = 0, high = n;                       // high = n means "there may be no true at all"
 while (low < high) {
     int mid = low + (high - low) / 2;
-    if (cond(mid)) high = mid; else low = mid + 1;
+    if (cond(mid)) high = mid;               // mid is true: it could be the first true, so keep it
+    else low = mid + 1;                      // mid is false: the answer is to its right
 }
-return low;
+return low;                                  // first true (n if none)
+```
 
-// 2) Classic exact search
+Trace on `[2, 4, 7, 9, 12]` with `cond = a[i] >= 7`:
+
+```
+low=0 high=5  mid=2  a[2]=7 >= 7 yes  → high=2
+low=0 high=2  mid=1  a[1]=4 >= 7 no   → low=2
+low=2 high=2  stop → answer index 2
+```
+
+### Template 2: classic exact search
+Use it for: "is this exact value in the sorted array? where?"
+
+```java
 int low = 0, high = n - 1;
 while (low <= high) {
     int mid = low + (high - low) / 2;
-    if (a[mid] == target) return mid;
-    if (a[mid] < target) low = mid + 1; else high = mid - 1;
+    if (a[mid] == target) return mid;        // found it
+    if (a[mid] < target) low = mid + 1;      // target is on the right
+    else high = mid - 1;                     // target is on the left
 }
+return -1;                                   // not found
 ```
 
-**Binary search on the answer:** pick the search range (min possible, max possible), write `isFeasible(x)`, and find the first (or last) feasible x.
+Trace on `[-1, 0, 3, 5, 9, 12]`, target `9`:
+
+```
+low=0 high=5  mid=2  a[2]=3 < 9   → low=3
+low=3 high=5  mid=4  a[4]=9 == 9  → return 4
+```
+
+**Which one?** Exact value → Template 2. First or last position, a boundary, or an answer → Template 1.
+
+## Binary search on the answer
+
+Sometimes there is **no sorted array**. Instead, the possible **answers** are a range of numbers, and you binary search over that range.
+
+Steps:
+1. Find the smallest and largest possible answer. That's your `low` and `high`.
+2. Write `isFeasible(x)`: a yes/no check for "does answer `x` work?"
+3. Check that it flips once (`no no no yes yes yes`). If so, use Template 1 to find the first yes (for "minimise") or the last yes (for "maximise").
+
+**Example: Koko Eating Bananas** (piles `[3, 6, 7, 11]`, finish within `h = 8` hours, find the smallest speed).
+- Range of speeds: `1` to `11` (the biggest pile).
+- `isFeasible(x)` = "sum of `ceil(pile / x)` over all piles `<= 8`?"
+
+| Speed | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|---|
+| Hours | 27 | 15 | 10 | 8 | 8 | 6 |
+| Feasible? | no | no | no | **yes** | yes | yes |
+
+The first yes is speed `4`. Binary search finds it in about `log(11)` checks, instead of trying all speeds.
 
 ## Fundamentals
 | Question (notes) | Practice | Idea | Time |
