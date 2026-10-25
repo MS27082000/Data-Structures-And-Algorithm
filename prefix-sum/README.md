@@ -8,6 +8,8 @@
 ## Core identity
 `sum(a[j+1..i]) = P[i] - P[j]`. To find subarrays with sum `k`, look for an earlier prefix equal to `P[i] - k` in a HashMap.
 
+**Why `P[i] - k`:** we want `P[i] - P[j] = k`. `P[i]` is known, `P[j]` is the unknown, so `P[j] = P[i] - k`. Full explanation with examples: [Count Subarrays with Sum K](CountSubarraysWithSumK.md).
+
 ## Template
 ```java
 Map<Long, Integer> seen = new HashMap<>();
