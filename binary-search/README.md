@@ -97,6 +97,54 @@ low=3 high=5  mid=4  a[4]=9 == 9  → return 4
 
 **Which one?** Exact value → Template 2. First or last position, a boundary, or an answer → Template 1.
 
+## `low <= high` or `low < high`?
+
+It depends on what the range means, and on whether you ever write `high = mid`.
+
+| | Template 2 (exact search) | Template 1 (first true) |
+|---|---|---|
+| Start | `low = 0`, `high = n - 1` | `low = 0`, `high = n` |
+| Range means | `[low .. high]`, both ends are real candidates | `[low .. high)`, `high` is a "none" slot |
+| Moves | `low = mid + 1`, `high = mid - 1` (throw `mid` away) | `low = mid + 1`, `high = mid` (keep `mid`) |
+| Loop | `while (low <= high)` | `while (low < high)` |
+| Ends when | `low > high` (range is empty) | `low == high` (one answer left) |
+
+- **Template 2, `<=`:** when `low == high` there is still one unchecked element, so it must be checked. Example `[5]`, target `5`: with `<` the loop would skip it.
+- **Template 1, `<`:** we keep `mid` on a "yes" (`high = mid`), because it might be the answer. When `low == high` the range is exactly the answer. With `<=` the loop would run forever.
+
+**Quick check:**
+- You write `high = mid - 1` and `low = mid + 1` (both skip `mid`) → `low <= high`.
+- You write `high = mid` (keeps `mid`) → `low < high`.
+
+## Which template for which question?
+
+Ask: **do I return the moment I find it, or do I narrow down to a boundary?**
+
+| What does the question ask? | Template | Loop |
+|---|---|---|
+| "Is this exact value there? Return its index." You can stop as soon as `a[mid] == target`. | Template 2 | `low <= high` |
+| "First / last / smallest / largest / minimum / maximum / boundary / answer in a range." You can't stop early. | Template 1 | `low < high` |
+
+**Template 2 (return when found):**
+- Binary Search (LC 704)
+- Search in Rotated Sorted Array I and II (exact target)
+- Search in 2D Matrix (flatten the index, exact target)
+
+**Template 1 (narrow to the answer):**
+- Lower Bound, Upper Bound, Search Insert Position, Floor and Ceil
+- First and Last Occurrence, Count Occurrences (built from lower and upper bound)
+- Find Minimum in Rotated Sorted Array, Rotation Count
+- Single Element in Sorted Array, Find Peak Element
+- Every "binary search on the answer" question: Square Root, Nth Root, Smallest Divisor, Koko, Bouquets, Ship Packages, Painter's Partition, Aggressive Cows, Book Allocation, Split Array Largest Sum, Kth Missing Positive
+
+**Clue in the question text:**
+- "Find the **index of**..." (an exact value) → Template 2.
+- "Find the **smallest / minimum / first / maximum** ... such that ..." → Template 1.
+
+**If you want just one template:** Template 1 can do exact search too. Find the lower bound `idx`, then check `idx < n && a[idx] == target`. You lose the early return, but you only need to remember one loop.
+
+Some problems can be written either way. Treat this as a safe default, not the only correct choice.
+
 ## Binary search on the answer
 
 Sometimes there is **no sorted array**. Instead, the possible **answers** are a range of numbers, and you binary search over that range.
