@@ -1,5 +1,7 @@
 # Add Binary (LC 67)
 
+**LeetCode:** [67](https://leetcode.com/problems/add-binary/)
+
 **Problem:** Add two binary strings, return the sum as a binary string.
 `("1010", "1011")` → `"10101"`
 

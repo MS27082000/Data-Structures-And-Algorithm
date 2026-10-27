@@ -1,5 +1,7 @@
 # Ransom Note (LC 383)
 
+**LeetCode:** [383](https://leetcode.com/problems/ransom-note/)
+
 **Problem:** Can `ransomNote` be made from letters of `magazine`, using each magazine letter at most once?
 `("aa", "aab")` → `true`, `("aa", "ab")` → `false`
 

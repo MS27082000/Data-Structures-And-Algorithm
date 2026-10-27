@@ -1,5 +1,7 @@
 # Multiply Strings (LC 43)
 
+**LeetCode:** [43](https://leetcode.com/problems/multiply-strings/)
+
 **Problem:** Multiply two non-negative integers given as strings. Do not convert them to numbers.
 `("123", "456")` → `"56088"`
 

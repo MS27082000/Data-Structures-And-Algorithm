@@ -1,5 +1,7 @@
 # Reverse Vowels of a String (LC 345)
 
+**LeetCode:** [345](https://leetcode.com/problems/reverse-vowels-of-a-string/)
+
 **Problem:** Reverse only the vowels (both cases). Other characters stay where they are.
 `"leetcode"` → `"leotcede"`
 

@@ -1,5 +1,7 @@
 # Integer to Roman (LC 12)
 
+**LeetCode:** [12](https://leetcode.com/problems/integer-to-roman/)
+
 **Problem:** Convert an integer 1 to 3999 into a Roman numeral.
 `1994` → `"MCMXCIV"`
 
@@ -23,4 +25,4 @@
 
 **Interview traps:** If the table has no `IV`, `IX`..., you output `IIII` or `VIIII`.
 
-**Pattern:** Reverse of [Roman to Integer](../../RomanToInteger.md). "Convert with a value table" → greedy from the biggest.
+**Pattern:** Reverse of [Roman to Integer](../RomanToInteger.md). "Convert with a value table" → greedy from the biggest.

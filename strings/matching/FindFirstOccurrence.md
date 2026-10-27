@@ -1,5 +1,7 @@
 # Find the Index of the First Occurrence in a String (LC 28)
 
+**LeetCode:** [28](https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/)
+
 **Problem:** Return the first index where `needle` appears in `haystack`, or `-1`. (Also called strStr.)
 `("sadbutsad", "sad")` → `0`
 
@@ -20,6 +22,6 @@
 **Interview traps**
 - Loop only while `i + m <= n`.
 - `indexOf` is the one-line answer, but interviewers want the loop.
-- **Follow-up:** do it in O(n + m) with KMP, which never moves back in `haystack`. See [KMPAlgorithm](../../advanced/KMPAlgorithm.md). Rabin-Karp (rolling hash) is the other option.
+- **Follow-up:** do it in O(n + m) with KMP, which never moves back in `haystack`. See [KMPAlgorithm](../advanced/KMPAlgorithm.md). Rabin-Karp (rolling hash) is the other option.
 
 **Pattern:** "find a pattern in a text" → naive first, then KMP if asked to optimise.

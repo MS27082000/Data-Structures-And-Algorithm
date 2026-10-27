@@ -1,5 +1,7 @@
 # Palindromic Substrings (LC 647)
 
+**LeetCode:** [647](https://leetcode.com/problems/palindromic-substrings/)
+
 **Problem:** Count all substrings of `s` that are palindromes (same substring at different positions counts separately).
 `"aaa"` → `6` (`a, a, a, aa, aa, aaa`)
 

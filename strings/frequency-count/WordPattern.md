@@ -1,5 +1,7 @@
 # Word Pattern (LC 290)
 
+**LeetCode:** [290](https://leetcode.com/problems/word-pattern/)
+
 **Problem:** Does sentence `s` follow `pattern`? Each letter ↔ exactly one word (a bijection).
 `("abba", "dog cat cat dog")` → `true`
 

@@ -1,5 +1,7 @@
 # Repeated Substring Pattern (LC 459)
 
+**LeetCode:** [459](https://leetcode.com/problems/repeated-substring-pattern/)
+
 **Problem:** Is `s` made by repeating a smaller substring two or more times?
 `"abab"` → `true` (`ab` × 2), `"aba"` → `false`
 

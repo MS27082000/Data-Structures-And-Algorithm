@@ -1,5 +1,7 @@
 # String Compression (LC 443)
 
+**LeetCode:** [443](https://leetcode.com/problems/string-compression/)
+
 **Problem:** Compress runs of equal characters in place: `aabbccc` → `a2b2c3`. A run of length 1 is written as just the character. Return the new length.
 
 **Key idea:** Two pointers.

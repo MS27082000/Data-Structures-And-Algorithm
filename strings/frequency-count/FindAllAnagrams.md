@@ -1,5 +1,7 @@
 # Find All Anagrams in a String (LC 438)
 
+**LeetCode:** [438](https://leetcode.com/problems/find-all-anagrams-in-a-string/)
+
 **Problem:** Return all start indices of substrings of `s` that are anagrams of `p`.
 `s = "cbaebabacd"`, `p = "abc"` → `[0, 6]`
 

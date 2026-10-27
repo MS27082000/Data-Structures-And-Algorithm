@@ -1,5 +1,7 @@
 # Decode String (LC 394)
 
+**LeetCode:** [394](https://leetcode.com/problems/decode-string/)
+
 **Problem:** Decode `k[encoded]` where the inside is repeated `k` times. Brackets can nest.
 `"3[a2[c]]"` → `"accaccacc"`
 

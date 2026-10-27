@@ -1,5 +1,7 @@
 # Is Subsequence (LC 392)
 
+**LeetCode:** [392](https://leetcode.com/problems/is-subsequence/)
+
 **Problem:** Can `s` be made by deleting some characters of `t` without reordering?
 `("abc", "ahbgdc")` → `true`, `("axc", "ahbgdc")` → `false`
 

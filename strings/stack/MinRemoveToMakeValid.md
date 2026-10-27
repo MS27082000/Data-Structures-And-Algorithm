@@ -1,5 +1,7 @@
 # Minimum Remove to Make Valid Parentheses (LC 1249)
 
+**LeetCode:** [1249](https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/)
+
 **Problem:** Remove the fewest `(` or `)` so the string is valid. Letters stay. Return any valid answer.
 `"lee(t(c)o)de)"` → `"lee(t(c)o)de"`
 

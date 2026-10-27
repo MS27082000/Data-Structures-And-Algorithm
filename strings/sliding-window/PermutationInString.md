@@ -1,5 +1,7 @@
 # Permutation in String (LC 567)
 
+**LeetCode:** [567](https://leetcode.com/problems/permutation-in-string/)
+
 **Problem:** Does `s2` contain a permutation of `s1` as a substring?
 `("ab", "eidbaooo")` → `true` (`"ba"`), `("ab", "eidboaoo")` → `false`
 

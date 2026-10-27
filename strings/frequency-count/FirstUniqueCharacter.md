@@ -1,5 +1,7 @@
 # First Unique Character in a String (LC 387)
 
+**LeetCode:** [387](https://leetcode.com/problems/first-unique-character-in-a-string/)
+
 **Problem:** Return the index of the first character that appears exactly once, or `-1`.
 `"loveleetcode"` → `2` (the `v`)
 

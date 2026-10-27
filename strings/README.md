@@ -41,4 +41,4 @@ Hashing, Rabin-Karp, Z function, KMP, Shortest Palindrome and more: see [advance
 
 
 ## Interview quick revision
-Pattern-wise string revision (frequency count, two pointers, window, stack, parsing): see [revision](revision/README.md).
+Pattern-wise string revision (frequency count, two pointers, window, stack, parsing): see [InterviewRevision](InterviewRevision.md).
