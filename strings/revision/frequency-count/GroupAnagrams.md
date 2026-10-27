@@ -1,19 +1,35 @@
 # Group Anagrams (LC 49)
 
 **Problem:** Group the strings that are anagrams of each other.
+`["eat","tea","tan","ate","nat","bat"]` → `[["eat","tea","ate"],["tan","nat"],["bat"]]`
 
-**Brute force:** Compare every string with every group using an anagram check → O(n² · k).
+**Brute force:** Compare each string with each group using an anagram check → O(n² · k).
 
-**Approach:** Anagrams look the same after sorting. Use the sorted string as a HashMap key and collect originals in a list.
+**Key idea:** All anagrams share one *canonical form*. Compute it, and use it as the HashMap key.
 
-**Faster key:** The 26 letter counts (`"1#0#...#"`) as the key → O(n · k), no sorting.
+**Dry run (sorted key):**
+| word | key | map after |
+|---|---|---|
+| eat | aet | aet → [eat] |
+| tea | aet | aet → [eat, tea] |
+| tan | ant | ant → [tan] |
+| ate | aet | aet → [eat, tea, ate] |
+| nat | ant | ant → [tan, nat] |
+| bat | abt | abt → [bat] |
 
-**Complexity:** Time O(n · k log k) with sort, O(n · k) with counts. Space O(n · k).
+**Two ways to make the key**
+| Key | Cost per word | Note |
+|---|---|---|
+| Sorted chars | O(k log k) | Simplest, say this first |
+| 26 counts joined with `#` | O(k) | Faster; follow-up answer |
 
-**Edge cases:** Empty string `""` is its own group; single string.
+**Complexity:** Time O(n · k log k) (or O(n · k) with counts). Space O(n · k).
+
+**Edge cases:** `""` is its own group; a single string; all words are anagrams → one group.
 
 **Interview traps**
-- Do not use `int[]` directly as a key (arrays use identity hashing). Convert to a String.
-- Join counts with a separator, or `"11"` can mean 1,1 or 11.
+- An `int[]` as a map key does not work (identity hash). Convert to a String.
+- Join counts with a separator, or `"1" "11"` and `"11" "1"` look the same.
+- Output order of groups does not matter.
 
-**Pattern:** "group by something" → HashMap with a canonical key.
+**Pattern:** "group by a property" → HashMap with a canonical key.

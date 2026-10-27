@@ -1,13 +1,33 @@
 # Minimum Remove to Make Valid Parentheses (LC 1249)
 
-**Problem:** Remove the fewest `(` or `)` so the string becomes valid. Return any valid result.
+**Problem:** Remove the fewest `(` or `)` so the string is valid. Letters stay. Return any valid answer.
+`"lee(t(c)o)de)"` → `"lee(t(c)o)de"`
 
-**Approach:** One pass with a stack of indices. On `(` push the index. On `)` pop if the stack has one, else this `)` is extra, so mark it. After the pass, whatever is left in the stack is an unmatched `(`, so mark those too. Build the answer skipping marked positions.
+**What makes a bracket extra?**
+- A `)` with no open `(` before it.
+- A `(` that never gets closed.
 
-**Complexity:** Time O(n), Space O(n).
+**Key idea:** One pass with a stack of **indices** of open `(`.
+- `(` → push its index
+- `)` → if stack is non-empty, pop (matched). Else this `)` is extra → mark it.
+After the pass, whatever indices remain in the stack are unmatched `(` → mark them. Build the answer without marked positions.
 
-**Edge cases:** Only brackets (`"))(("` → empty); letters between brackets stay.
+**Dry run (`"a)b(c"`):**
+| i | char | action |
+|---|---|---|
+| 1 | `)` | stack empty → mark index 1 |
+| 3 | `(` | push 3 |
+| end | | stack has 3 → mark index 3 |
+Result `"abc"`.
 
-**Interview traps:** Store **indices**, not characters, so you know what to delete. Don't forget the leftover `(` after the loop.
+**Complexity:** Time O(n). Space O(n).
 
-**Pattern:** "fix / validate brackets" → stack of indices. If only a yes/no is needed, a counter is enough.
+**Edge cases:** Only brackets (`"))(("` → empty); no brackets at all.
+
+**Interview traps**
+- Push **indices**, not characters, because you must know *which* to delete.
+- Do not forget the leftover `(` after the loop.
+- Two-pass alternative (O(1) extra space apart from the output): left to right drop extra `)`, then right to left drop extra `(`.
+- Only yes/no needed? A counter is enough (see Valid Parentheses).
+
+**Pattern:** "fix brackets" → stack of indices.

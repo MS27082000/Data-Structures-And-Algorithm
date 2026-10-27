@@ -1,13 +1,28 @@
 # Palindromic Substrings (LC 647)
 
-**Problem:** Count how many substrings of `s` are palindromes.
+**Problem:** Count all substrings of `s` that are palindromes (same substring at different positions counts separately).
+`"aaa"` → `6` (`a, a, a, aa, aa, aaa`)
 
-**Approach:** Expand around every centre. There are `2n - 1` centres: each character (odd length) and each gap between characters (even length). Each successful expansion is one palindrome.
+**Brute force:** Check all O(n²) substrings, each in O(n) → O(n³).
 
-**Complexity:** Time O(n²), Space O(1).
+**Key idea:** A palindrome mirrors around its centre. There are `2n - 1` centres: `n` characters (odd length) and `n - 1` gaps (even length). From each centre, expand outward while the two ends match. **Every successful expansion is one new palindrome.**
 
-**Edge cases:** All same characters (`"aaa"` → 6); single character.
+**Dry run (`"aaa"`):**
+| centre | expansions that succeed | count |
+|---|---|---|
+| index 0 (odd) | `a` | 1 |
+| gap 0-1 (even) | `aa` | 1 |
+| index 1 (odd) | `a`, `aaa` | 2 |
+| gap 1-2 (even) | `aa` | 1 |
+| index 2 (odd) | `a` | 1 |
+| total | | 6 |
 
-**Interview traps:** Forgetting the even-length centres. Count every expansion step, not just the final one.
+**Complexity:** Time O(n²). Space O(1). (Manacher's algorithm gives O(n) but is rarely asked.)
 
-**Pattern:** "palindromic substring" → expand around centre. Same as Longest Palindromic Substring (in `strings/`), but count instead of track the max.
+**Edge cases:** All same letters (worst case); no repeats (`"abc"` → 3, only single letters).
+
+**Interview traps**
+- Forgetting the even centres.
+- Count each step, not just the final longest palindrome.
+
+**Pattern:** "palindromic substring" → expand around centre. Compare with Longest Palindromic Substring, which only tracks the max length.

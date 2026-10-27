@@ -1,17 +1,35 @@
 # Decode String (LC 394)
 
-**Problem:** Decode strings like `3[a2[c]]` where `k[x]` means `x` repeated `k` times.
+**Problem:** Decode `k[encoded]` where the inside is repeated `k` times. Brackets can nest.
+`"3[a2[c]]"` → `"accaccacc"`
 
-**Approach:** Keep a current `StringBuilder` and a number `k`.
-- digit → build `k` (can be multi-digit)
-- `[` → push `k` and the current string, start a fresh current string
-- `]` → pop the previous string and count, append current `count` times to the previous one
-- letter → append to current
+**Key idea:** When you meet `[`, you go one level deeper, so **save the outer state** (the string built so far and the repeat count). When you meet `]`, come back out: repeat the inner result and glue it to the saved outer string.
 
-**Complexity:** Time and space O(length of output).
+**Rules**
+| char | action |
+|---|---|
+| digit | `k = k * 10 + digit` (counts can be multi-digit) |
+| `[` | push `k` and `cur`; `cur = new`, `k = 0` |
+| `]` | pop `prev` and `times`; `cur = prev + cur × times` |
+| letter | append to `cur` |
 
-**Edge cases:** Nested brackets; multi-digit counts (`10[a]`); letters outside brackets.
+**Dry run (`"3[a2[c]]"`):**
+| char | cur | counts stack | prev stack |
+|---|---|---|---|
+| 3 | "" | | |
+| `[` | "" | [3] | [""] |
+| a | a | [3] | [""] |
+| 2 | a | [3] | [""] |
+| `[` | "" | [3,2] | ["", "a"] |
+| c | c | | |
+| `]` | acc | [3] | [""] |
+| `]` | accaccacc | [] | [] |
 
-**Interview traps:** Reset `k = 0` after `[`. Counts can be more than one digit.
+**Complexity:** Time and space O(length of the output).
 
-**Pattern:** "nested structure" → stack that saves the outer state when you go in and restores it when you come out.
+**Edge cases:** `10[a]` (two-digit count); letters outside brackets (`2[abc]3[cd]ef`).
+
+**Interview traps:** Reset `k = 0` after `[`. Don't treat the count as a single digit.
+**Alternative:** Recursion, one call per `[`.
+
+**Pattern:** "nested structure" → stack that saves the outer state going in and restores it coming out.

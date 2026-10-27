@@ -1,13 +1,27 @@
 # Is Subsequence (LC 392)
 
-**Problem:** Can `s` be formed by deleting some characters of `t` without changing the order?
+**Problem:** Can `s` be made by deleting some characters of `t` without reordering?
+`("abc", "ahbgdc")` → `true`, `("axc", "ahbgdc")` → `false`
 
-**Approach:** Pointer `i` on `s`, pointer `j` scanning `t`. When the characters match, move `i`. At the end, `i == s.length()` means yes.
+**Subsequence vs substring:** subsequence keeps order but can skip characters. Substring must be contiguous.
 
-**Complexity:** Time O(|t|), Space O(1).
+**Key idea:** Greedy. Walk through `t`. Every time `t[j]` equals the character of `s` we are waiting for (`s[i]`), take it and move `i`. Taking the earliest match never hurts.
 
-**Edge cases:** Empty `s` → true; empty `t` with non-empty `s` → false.
+**Dry run (`s = "abc"`, `t = "ahbgdc"`):**
+| j (t) | s[i] wanted | match? | i |
+|---|---|---|---|
+| a | a | yes | 1 |
+| h | b | no | 1 |
+| b | b | yes | 2 |
+| g, d | c | no | 2 |
+| c | c | yes | 3 = len(s) → `true` |
 
-**Interview traps:** Subsequence keeps order but need not be contiguous (that is a substring). Follow-up with many `s` queries → store the positions of each letter in `t` and binary search.
+**Complexity:** Time O(|t|). Space O(1).
 
-**Pattern:** "order preserved, gaps allowed" → one pointer per string, advance the first only on a match.
+**Edge cases:** Empty `s` → `true`; empty `t` with non-empty `s` → `false`.
+
+**Interview traps**
+- The answer is `i == s.length()`, not "loop finished".
+- **Follow-up** (millions of `s` queries against one `t`): store the indices of each letter of `t`, then for each query binary search the next index after the previous one.
+
+**Pattern:** "order matters, gaps allowed" → one pointer per string, advance `s` only on a match.

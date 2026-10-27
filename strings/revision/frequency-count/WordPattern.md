@@ -1,16 +1,29 @@
 # Word Pattern (LC 290)
 
-**Problem:** Does the sentence `s` follow `pattern`? Each letter maps to exactly one word and each word to exactly one letter.
+**Problem:** Does sentence `s` follow `pattern`? Each letter ↔ exactly one word (a bijection).
+`("abba", "dog cat cat dog")` → `true`
 
-**Approach:** Same as Isomorphic Strings, with words instead of characters. Keep two maps (char → word, word → char) and check both directions on every position.
+**Key idea:** Same as Isomorphic Strings, but the "characters" of the second string are words. A bijection needs checks in **both** directions.
 
-**Complexity:** Time O(n), Space O(n).
+**Why two maps:**
+| Case | pattern | s | One map says | Truth |
+|---|---|---|---|---|
+| Two letters, one word | `abba` | `dog dog dog dog` | a→dog, b→dog (fine) | `false` |
+| One letter, two words | `aaaa` | `dog cat cat dog` | a→dog then a→cat (caught) | `false` |
+Only `word → letter` catches the first case.
 
-**Edge cases:** Different lengths → false; `"abba"` with `"dog dog dog dog"` → false (two letters, one word).
+**Dry run (`abba`, `dog cat cat fish`):**
+- a→dog, dog→a
+- b→cat, cat→b
+- b again, word `cat`: matches
+- a, word `fish`: `a` maps to `dog` ≠ `fish` → `false`
+
+**Complexity:** Time O(n). Space O(n).
+
+**Edge cases:** Different counts of words and letters → `false` right away.
 
 **Interview traps**
-- One map is not enough. The check must be both ways.
+- Split first and compare lengths before the loop.
 - Compare words with `.equals`, not `==`.
-- Use `!= c` on `Character` only because `c` is a primitive here. Otherwise use `.equals`.
 
-**Pattern:** "one-to-one mapping" → two maps (or two last-seen arrays).
+**Pattern:** "one-to-one mapping" → two maps (char→word and word→char).

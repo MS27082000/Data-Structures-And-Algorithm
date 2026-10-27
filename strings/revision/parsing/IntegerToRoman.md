@@ -1,13 +1,26 @@
 # Integer to Roman (LC 12)
 
-**Problem:** Convert an integer (1 to 3999) to a Roman numeral.
+**Problem:** Convert an integer 1 to 3999 into a Roman numeral.
+`1994` → `"MCMXCIV"`
 
-**Approach:** Greedy with a table that already includes the subtractive pairs `CM, CD, XC, XL, IX, IV`. Go from the biggest value to the smallest and append the symbol while the number is at least that value.
+**Symbols:** `I=1 V=5 X=10 L=50 C=100 D=500 M=1000`. Six subtractive forms: `IV=4 IX=9 XL=40 XC=90 CD=400 CM=900`.
 
-**Complexity:** Time O(1) (bounded output), Space O(1).
+**Key idea:** Greedy. Put the subtractive forms *into the table* so the loop needs no special cases. Go from the largest value to the smallest and take each symbol as many times as it fits.
 
-**Edge cases:** 4, 9, 40, 90, 400, 900; 3999 is the max.
+**Table:** `1000 M, 900 CM, 500 D, 400 CD, 100 C, 90 XC, 50 L, 40 XL, 10 X, 9 IX, 5 V, 4 IV, 1 I`
 
-**Interview traps:** Missing the subtractive pairs in the table gives `IIII` instead of `IV`.
+**Dry run (`1994`):**
+| value | takes | remaining | output |
+|---|---|---|---|
+| 1000 | 1 | 994 | M |
+| 900 | 1 | 94 | MCM |
+| 90 | 1 | 4 | MCMXC |
+| 4 | 1 | 0 | MCMXCIV |
 
-**Pattern:** Reverse of [Roman to Integer](../../RomanToInteger.md).
+**Complexity:** Time O(1) (the output is bounded). Space O(1).
+
+**Edge cases:** `4`, `9`, `40`, `90`, `400`, `900`; the max `3999` → `MMMCMXCIX`.
+
+**Interview traps:** If the table has no `IV`, `IX`..., you output `IIII` or `VIIII`.
+
+**Pattern:** Reverse of [Roman to Integer](../../RomanToInteger.md). "Convert with a value table" → greedy from the biggest.

@@ -1,13 +1,26 @@
 # Permutation in String (LC 567)
 
-**Problem:** Return true if `s2` contains any permutation of `s1` as a substring.
+**Problem:** Does `s2` contain a permutation of `s1` as a substring?
+`("ab", "eidbaooo")` → `true` (`"ba"`), `("ab", "eidboaoo")` → `false`
 
-**Approach:** Same as Find All Anagrams, but stop at the first match. Fixed window of size `|s1|`, one 26-array of counts, all zeros means a permutation.
+**Key idea:** A permutation of `s1` is a *substring of the same length* with the same letter counts. So slide a fixed window of size `|s1|` over `s2` and compare counts. It is Find All Anagrams, but return at the first hit.
 
-**Complexity:** Time O(26 · n), Space O(1).
+**Count trick:** `need[]` starts as the counts of `s1`. Letter enters → `need[c]--`. Letter leaves → `need[c]++`. All zeros → match.
 
-**Edge cases:** `s1` longer than `s2` → false.
+**Dry run (`s1 = "ab"`, `s2 = "eidba"`):**
+| window | change | zeros? |
+|---|---|---|
+| ei | - | no |
+| id | e leaves, d enters | no |
+| db | i leaves, b enters | no (a still +1) |
+| ba | d leaves, a enters | yes → `true` |
 
-**Interview traps:** The permutation must be a contiguous substring, so a window is needed (not a subsequence).
+**Complexity:** Time O(26 · n). Space O(1).
 
-**Pattern:** "permutation / anagram inside a longer string" → fixed window + frequency array.
+**Edge cases:** `|s1| > |s2|` → `false`.
+
+**Interview traps**
+- It must be contiguous. Do not confuse with a subsequence.
+- Do not sort each window (O(n · k log k)); update counts instead.
+
+**Pattern:** "permutation / anagram inside a longer string" → fixed window + count array.
