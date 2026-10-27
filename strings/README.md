@@ -39,3 +39,6 @@ java -cp out LongestPalindromicSubstring
 ## Advanced string algorithms
 Hashing, Rabin-Karp, Z function, KMP, Shortest Palindrome and more: see [advanced](advanced/README.md).
 
+
+## Interview quick revision
+Pattern-wise string revision (frequency count, two pointers, window, stack, parsing): see [revision](revision/README.md).
