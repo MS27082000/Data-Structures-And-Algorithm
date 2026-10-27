@@ -4,32 +4,59 @@ public class AddTwoNumbers {
     static class ListNode {
         int val;
         ListNode next;
-        ListNode(int v) { val = v; }
+
+        ListNode(int val) {
+            this.val = val;
+        }
     }
 
     static ListNode build(int... a) {
-        ListNode dummy = new ListNode(0), tail = dummy;
-        for (int x : a) { tail.next = new ListNode(x); tail = tail.next; }
+        ListNode dummy = new ListNode(0);
+        ListNode tail = dummy;
+        for (int x : a) {
+            tail.next = new ListNode(x);
+            tail = tail.next;
+        }
         return dummy.next;
     }
 
-    static String str(ListNode h) {
-        StringBuilder sb = new StringBuilder();
-        for (; h != null; h = h.next) sb.append(h.val).append(h.next != null ? "->" : "");
-        return sb.length() == 0 ? "null" : sb.toString();
+    static String str(ListNode head) {
+        if (head == null) {
+            return "null";
+        }
+        String s = "";
+        ListNode cur = head;
+        while (cur != null) {
+            s = s + cur.val;
+            if (cur.next != null) {
+                s = s + "->";
+            }
+            cur = cur.next;
+        }
+        return s;
     }
 
-    // Walk both lists together adding digits and a carry. O(max(m, n)) time, O(1) extra (besides the result)
+    // Add digit by digit with a carry. O(max(m, n)) time
     static ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-        ListNode dummy = new ListNode(0), tail = dummy;
+        ListNode dummy = new ListNode(0);
+        ListNode tail = dummy;
         int carry = 0;
-        while (l1 != null || l2 != null || carry != 0) {      // "|| carry != 0" handles a final carry digit
+
+        while (l1 != null || l2 != null || carry != 0) {
             int sum = carry;
-            if (l1 != null) { sum += l1.val; l1 = l1.next; }
-            if (l2 != null) { sum += l2.val; l2 = l2.next; }
+
+            if (l1 != null) {
+                sum = sum + l1.val;
+                l1 = l1.next;
+            }
+            if (l2 != null) {
+                sum = sum + l2.val;
+                l2 = l2.next;
+            }
+
             tail.next = new ListNode(sum % 10);
-            carry = sum / 10;
             tail = tail.next;
+            carry = sum / 10;
         }
         return dummy.next;
     }

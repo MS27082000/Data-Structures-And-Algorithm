@@ -1,37 +1,75 @@
-/** Sort a Linked List of 0's, 1's and 2's (by relinking nodes, not by overwriting values) */
+/** Sort a Linked List of 0s, 1s and 2s (by relinking nodes, not by overwriting values) */
 public class SortList012 {
 
     static class ListNode {
         int val;
         ListNode next;
-        ListNode(int v) { val = v; }
+
+        ListNode(int val) {
+            this.val = val;
+        }
     }
 
     static ListNode build(int... a) {
-        ListNode dummy = new ListNode(0), tail = dummy;
-        for (int x : a) { tail.next = new ListNode(x); tail = tail.next; }
+        ListNode dummy = new ListNode(0);
+        ListNode tail = dummy;
+        for (int x : a) {
+            tail.next = new ListNode(x);
+            tail = tail.next;
+        }
         return dummy.next;
     }
 
-    static String str(ListNode h) {
-        StringBuilder sb = new StringBuilder();
-        for (; h != null; h = h.next) sb.append(h.val).append(h.next != null ? "->" : "");
-        return sb.length() == 0 ? "null" : sb.toString();
+    static String str(ListNode head) {
+        if (head == null) {
+            return "null";
+        }
+        String s = "";
+        ListNode cur = head;
+        while (cur != null) {
+            s = s + cur.val;
+            if (cur.next != null) {
+                s = s + "->";
+            }
+            cur = cur.next;
+        }
+        return s;
     }
 
-    // Three dummy-headed lists (zeros, ones, twos); append each node to its list, then stitch them. O(n) time, O(1) space
+    // Make three lists (zeros, ones, twos), then join them. O(n) time, O(1) space
     static ListNode sortList(ListNode head) {
-        ListNode zeroD = new ListNode(-1), oneD = new ListNode(-1), twoD = new ListNode(-1);
-        ListNode zero = zeroD, one = oneD, two = twoD;
-        for (ListNode cur = head; cur != null; cur = cur.next) {
-            if (cur.val == 0) { zero.next = cur; zero = cur; }
-            else if (cur.val == 1) { one.next = cur; one = cur; }
-            else { two.next = cur; two = cur; }
+        ListNode zeroDummy = new ListNode(-1);
+        ListNode oneDummy = new ListNode(-1);
+        ListNode twoDummy = new ListNode(-1);
+        ListNode zero = zeroDummy;
+        ListNode one = oneDummy;
+        ListNode two = twoDummy;
+
+        ListNode cur = head;
+        while (cur != null) {
+            if (cur.val == 0) {
+                zero.next = cur;
+                zero = zero.next;
+            } else if (cur.val == 1) {
+                one.next = cur;
+                one = one.next;
+            } else {
+                two.next = cur;
+                two = two.next;
+            }
+            cur = cur.next;
         }
-        zero.next = (oneD.next != null) ? oneD.next : twoD.next;   // skip the 1s list if it is empty
-        one.next = twoD.next;
-        two.next = null;                                           // IMPORTANT: terminate to avoid a cycle
-        return zeroD.next;
+
+        // join: zeros -> ones -> twos
+        if (oneDummy.next != null) {
+            zero.next = oneDummy.next;
+        } else {
+            zero.next = twoDummy.next;
+        }
+        one.next = twoDummy.next;
+        two.next = null;    // IMPORTANT: end the list, otherwise a cycle can form
+
+        return zeroDummy.next;
     }
 
     public static void main(String[] args) {

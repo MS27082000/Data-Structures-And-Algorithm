@@ -1,26 +1,62 @@
-/** Intersection of Two Linked Lists (LC 160): return the node where two lists merge (Y shape), or null */
+/** Intersection of Two Linked Lists (LC 160): return the node where two lists meet (Y shape), or null */
 public class IntersectionOfTwoLinkedLists {
 
     static class ListNode {
         int val;
         ListNode next;
-        ListNode(int v) { val = v; }
+
+        ListNode(int val) {
+            this.val = val;
+        }
     }
 
     static ListNode build(int... a) {
-        ListNode dummy = new ListNode(0), tail = dummy;
-        for (int x : a) { tail.next = new ListNode(x); tail = tail.next; }
+        ListNode dummy = new ListNode(0);
+        ListNode tail = dummy;
+        for (int x : a) {
+            tail.next = new ListNode(x);
+            tail = tail.next;
+        }
         return dummy.next;
     }
 
-    // Two pointers: when one reaches the end it jumps to the OTHER list's head. Both then travel lenA + lenB nodes,
-    // so they meet at the intersection (or both become null together). O(m + n) time, O(1) space
+    static String str(ListNode head) {
+        if (head == null) {
+            return "null";
+        }
+        String s = "";
+        ListNode cur = head;
+        while (cur != null) {
+            s = s + cur.val;
+            if (cur.next != null) {
+                s = s + "->";
+            }
+            cur = cur.next;
+        }
+        return s;
+    }
+
+    // Two pointers. When one reaches the end, it jumps to the OTHER list's head.
+    // Both walk lenA + lenB steps, so they meet at the intersection (or both become null). O(m + n) time, O(1) space
     static ListNode getIntersectionNode(ListNode headA, ListNode headB) {
-        if (headA == null || headB == null) return null;
-        ListNode a = headA, b = headB;
+        if (headA == null || headB == null) {
+            return null;
+        }
+
+        ListNode a = headA;
+        ListNode b = headB;
         while (a != b) {
-            a = (a == null) ? headB : a.next;
-            b = (b == null) ? headA : b.next;
+            if (a == null) {
+                a = headB;
+            } else {
+                a = a.next;
+            }
+
+            if (b == null) {
+                b = headA;
+            } else {
+                b = b.next;
+            }
         }
         return a;
     }

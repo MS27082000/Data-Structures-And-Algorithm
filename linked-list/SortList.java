@@ -4,42 +4,81 @@ public class SortList {
     static class ListNode {
         int val;
         ListNode next;
-        ListNode(int v) { val = v; }
+
+        ListNode(int val) {
+            this.val = val;
+        }
     }
 
     static ListNode build(int... a) {
-        ListNode dummy = new ListNode(0), tail = dummy;
-        for (int x : a) { tail.next = new ListNode(x); tail = tail.next; }
+        ListNode dummy = new ListNode(0);
+        ListNode tail = dummy;
+        for (int x : a) {
+            tail.next = new ListNode(x);
+            tail = tail.next;
+        }
         return dummy.next;
     }
 
-    static String str(ListNode h) {
-        StringBuilder sb = new StringBuilder();
-        for (; h != null; h = h.next) sb.append(h.val).append(h.next != null ? "->" : "");
-        return sb.length() == 0 ? "null" : sb.toString();
+    static String str(ListNode head) {
+        if (head == null) {
+            return "null";
+        }
+        String s = "";
+        ListNode cur = head;
+        while (cur != null) {
+            s = s + cur.val;
+            if (cur.next != null) {
+                s = s + "->";
+            }
+            cur = cur.next;
+        }
+        return s;
     }
 
-    // Merge sort: split at the middle (slow/fast), sort both halves recursively, merge. O(n log n) time, O(log n) stack
+    // Merge sort: find middle, split, sort both halves, merge. O(n log n) time, O(log n) stack
     static ListNode sortList(ListNode head) {
-        if (head == null || head.next == null) return head;
-        ListNode slow = head, fast = head.next;              // fast starts one ahead so slow ends at the END of the first half
+        if (head == null || head.next == null) {
+            return head;
+        }
+
+        // find the end of the first half (fast starts one step ahead)
+        ListNode slow = head;
+        ListNode fast = head.next;
         while (fast != null && fast.next != null) {
             slow = slow.next;
             fast = fast.next.next;
         }
+
+        // split into two lists
         ListNode second = slow.next;
-        slow.next = null;                                    // cut the list in two
-        return merge(sortList(head), sortList(second));
+        slow.next = null;
+
+        ListNode left = sortList(head);
+        ListNode right = sortList(second);
+        return merge(left, right);
     }
 
-    private static ListNode merge(ListNode a, ListNode b) {
-        ListNode dummy = new ListNode(0), tail = dummy;
+    static ListNode merge(ListNode a, ListNode b) {
+        ListNode dummy = new ListNode(0);
+        ListNode tail = dummy;
+
         while (a != null && b != null) {
-            if (a.val <= b.val) { tail.next = a; a = a.next; }
-            else { tail.next = b; b = b.next; }
+            if (a.val <= b.val) {
+                tail.next = a;
+                a = a.next;
+            } else {
+                tail.next = b;
+                b = b.next;
+            }
             tail = tail.next;
         }
-        tail.next = (a != null) ? a : b;
+
+        if (a != null) {
+            tail.next = a;
+        } else {
+            tail.next = b;
+        }
         return dummy.next;
     }
 

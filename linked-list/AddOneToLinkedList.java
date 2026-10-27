@@ -4,46 +4,82 @@ public class AddOneToLinkedList {
     static class ListNode {
         int val;
         ListNode next;
-        ListNode(int v) { val = v; }
+
+        ListNode(int val) {
+            this.val = val;
+        }
     }
 
     static ListNode build(int... a) {
-        ListNode dummy = new ListNode(0), tail = dummy;
-        for (int x : a) { tail.next = new ListNode(x); tail = tail.next; }
+        ListNode dummy = new ListNode(0);
+        ListNode tail = dummy;
+        for (int x : a) {
+            tail.next = new ListNode(x);
+            tail = tail.next;
+        }
         return dummy.next;
     }
 
-    static String str(ListNode h) {
-        StringBuilder sb = new StringBuilder();
-        for (; h != null; h = h.next) sb.append(h.val).append(h.next != null ? "->" : "");
-        return sb.length() == 0 ? "null" : sb.toString();
+    static String str(ListNode head) {
+        if (head == null) {
+            return "null";
+        }
+        String s = "";
+        ListNode cur = head;
+        while (cur != null) {
+            s = s + cur.val;
+            if (cur.next != null) {
+                s = s + "->";
+            }
+            cur = cur.next;
+        }
+        return s;
     }
 
-    // Find the LAST node that is not 9. Increment it and zero every node after it.
-    // If every digit is 9, a new leading 1 is needed (sentinel node). O(n) time, O(1) space
+    // Find the LAST node that is not 9. Add 1 to it, make every node after it 0.
+    // If all digits are 9, a new leading node (sentinel) becomes 1. O(n) time, O(1) space
     static ListNode plusOne(ListNode head) {
         ListNode sentinel = new ListNode(0);
         sentinel.next = head;
+
         ListNode notNine = sentinel;
-        for (ListNode cur = head; cur != null; cur = cur.next) {
-            if (cur.val != 9) notNine = cur;
+        ListNode cur = head;
+        while (cur != null) {
+            if (cur.val != 9) {
+                notNine = cur;
+            }
+            cur = cur.next;
         }
-        notNine.val++;
-        for (ListNode cur = notNine.next; cur != null; cur = cur.next) cur.val = 0;
-        return sentinel.val == 0 ? head : sentinel;
+
+        notNine.val = notNine.val + 1;
+
+        cur = notNine.next;
+        while (cur != null) {
+            cur.val = 0;
+            cur = cur.next;
+        }
+
+        if (sentinel.val == 0) {
+            return head;
+        }
+        return sentinel;
     }
 
-    // Alternative: recursion returns the carry. O(n) time, O(n) stack
+    // Recursive version: the helper returns the carry. O(n) time, O(n) stack
     static ListNode plusOneRecursive(ListNode head) {
         int carry = helper(head);
-        if (carry == 0) return head;
-        ListNode n = new ListNode(carry);
-        n.next = head;
-        return n;
+        if (carry == 0) {
+            return head;
+        }
+        ListNode newHead = new ListNode(carry);
+        newHead.next = head;
+        return newHead;
     }
 
-    private static int helper(ListNode node) {
-        if (node == null) return 1;               // the "+1" enters at the end
+    static int helper(ListNode node) {
+        if (node == null) {
+            return 1;    // the +1 starts from the end
+        }
         int sum = node.val + helper(node.next);
         node.val = sum % 10;
         return sum / 10;

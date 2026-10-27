@@ -4,50 +4,90 @@ public class FlattenLinkedList {
 
     static class Node {
         int data;
-        Node next, bottom;
-        Node(int d) { data = d; }
+        Node next;
+        Node bottom;
+
+        Node(int data) {
+            this.data = data;
+        }
     }
 
     // Build one column from values (linked by bottom)
     static Node column(int... a) {
-        Node dummy = new Node(0), tail = dummy;
-        for (int x : a) { tail.bottom = new Node(x); tail = tail.bottom; }
+        Node dummy = new Node(0);
+        Node tail = dummy;
+        for (int x : a) {
+            tail.bottom = new Node(x);
+            tail = tail.bottom;
+        }
         return dummy.bottom;
     }
 
     // Merge two sorted lists that are linked by `bottom`
-    private static Node merge(Node a, Node b) {
-        Node dummy = new Node(0), tail = dummy;
+    static Node merge(Node a, Node b) {
+        Node dummy = new Node(0);
+        Node tail = dummy;
+
         while (a != null && b != null) {
-            if (a.data <= b.data) { tail.bottom = a; a = a.bottom; }
-            else { tail.bottom = b; b = b.bottom; }
+            if (a.data <= b.data) {
+                tail.bottom = a;
+                a = a.bottom;
+            } else {
+                tail.bottom = b;
+                b = b.bottom;
+            }
             tail = tail.bottom;
         }
-        tail.bottom = (a != null) ? a : b;
+
+        if (a != null) {
+            tail.bottom = a;
+        } else {
+            tail.bottom = b;
+        }
         return dummy.bottom;
     }
 
-    // Recursively flatten the rest (to the right), then merge the current column with it.
-    // O(N) total nodes per merge level => O(N * k) worst case for k columns; O(k) stack
+    // Flatten the columns on the right first, then merge the current column with that result.
+    // O(N * k) worst case for k columns; O(k) stack
     static Node flatten(Node head) {
-        if (head == null || head.next == null) return head;
-        Node merged = merge(head, flatten(head.next));
-        head.next = null;                                    // the result uses only `bottom`
+        if (head == null || head.next == null) {
+            return head;
+        }
+
+        Node rest = flatten(head.next);
+        Node merged = merge(head, rest);
+        head.next = null;    // result uses only `bottom`
         return merged;
     }
 
-    static String str(Node h) {
-        StringBuilder sb = new StringBuilder();
-        for (; h != null; h = h.bottom) sb.append(h.data).append(h.bottom != null ? "->" : "");
-        return sb.length() == 0 ? "null" : sb.toString();
+    static String str(Node head) {
+        if (head == null) {
+            return "null";
+        }
+        String s = "";
+        Node cur = head;
+        while (cur != null) {
+            s = s + cur.data;
+            if (cur.bottom != null) {
+                s = s + "->";
+            }
+            cur = cur.bottom;
+        }
+        return s;
     }
 
     public static void main(String[] args) {
-        Node a = column(5, 7, 8, 30), b = column(10, 20), c = column(19, 22, 50), d = column(28, 35, 40, 45);
-        a.next = b; b.next = c; c.next = d;
+        Node a = column(5, 7, 8, 30);
+        Node b = column(10, 20);
+        Node c = column(19, 22, 50);
+        Node d = column(28, 35, 40, 45);
+        a.next = b;
+        b.next = c;
+        c.next = d;
         System.out.println(str(flatten(a)));        // 5->7->8->10->19->20->22->28->30->35->40->45->50
 
-        Node x = column(1, 4), y = column(2, 3);
+        Node x = column(1, 4);
+        Node y = column(2, 3);
         x.next = y;
         System.out.println(str(flatten(x)));        // 1->2->3->4
 

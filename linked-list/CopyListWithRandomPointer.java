@@ -6,55 +6,112 @@ public class CopyListWithRandomPointer {
 
     static class Node {
         int val;
-        Node next, random;
-        Node(int v) { val = v; }
+        Node next;
+        Node random;
+
+        Node(int val) {
+            this.val = val;
+        }
     }
 
-    // Approach 1: HashMap original -> copy. Two passes. O(n) time, O(n) space
+    // Approach 1: HashMap (original -> copy). Two passes. O(n) time, O(n) space
     static Node copyRandomListMap(Node head) {
         Map<Node, Node> map = new HashMap<>();
-        for (Node cur = head; cur != null; cur = cur.next) map.put(cur, new Node(cur.val));
-        for (Node cur = head; cur != null; cur = cur.next) {
-            map.get(cur).next = map.get(cur.next);              // map.get(null) is null: handles the ends
-            map.get(cur).random = map.get(cur.random);
+
+        // pass 1: make a copy of every node
+        Node cur = head;
+        while (cur != null) {
+            map.put(cur, new Node(cur.val));
+            cur = cur.next;
+        }
+
+        // pass 2: set next and random of every copy (map.get(null) is null, so ends are fine)
+        cur = head;
+        while (cur != null) {
+            Node copy = map.get(cur);
+            copy.next = map.get(cur.next);
+            copy.random = map.get(cur.random);
+            cur = cur.next;
         }
         return map.get(head);
     }
 
-    // Approach 2 (optimal): interleave copies, set randoms, then separate. O(n) time, O(1) extra space
+    // Approach 2 (optimal): put each copy right after its original, set randoms, then separate. O(n) time, O(1) extra space
     static Node copyRandomList(Node head) {
-        if (head == null) return null;
-        for (Node cur = head; cur != null; cur = cur.next.next) {       // 1) A -> A' -> B -> B' ...
+        if (head == null) {
+            return null;
+        }
+
+        // 1) A -> A' -> B -> B' -> ...
+        Node cur = head;
+        while (cur != null) {
             Node copy = new Node(cur.val);
             copy.next = cur.next;
             cur.next = copy;
+            cur = copy.next;
         }
-        for (Node cur = head; cur != null; cur = cur.next.next) {       // 2) copy.random = original.random.next
-            if (cur.random != null) cur.next.random = cur.random.next;
+
+        // 2) copy.random = original.random.next
+        cur = head;
+        while (cur != null) {
+            if (cur.random != null) {
+                cur.next.random = cur.random.next;
+            }
+            cur = cur.next.next;
         }
+
+        // 3) separate the two lists
         Node newHead = head.next;
-        for (Node cur = head; cur != null; cur = cur.next) {            // 3) split the two lists back apart
+        cur = head;
+        while (cur != null) {
             Node copy = cur.next;
             cur.next = copy.next;
-            copy.next = (copy.next != null) ? copy.next.next : null;
+            if (copy.next != null) {
+                copy.next = copy.next.next;
+            }
+            cur = cur.next;
         }
         return newHead;
     }
 
-    // Helper: describe a list as val(randomVal) so we can compare structure
+    // Helper: print as val(randomVal)
     static String describe(Node head) {
-        StringBuilder sb = new StringBuilder();
-        for (Node cur = head; cur != null; cur = cur.next) {
-            sb.append(cur.val).append('(').append(cur.random == null ? "null" : cur.random.val).append(')');
-            if (cur.next != null) sb.append("->");
+        if (head == null) {
+            return "null";
         }
-        return sb.length() == 0 ? "null" : sb.toString();
+        String s = "";
+        Node cur = head;
+        while (cur != null) {
+            s = s + cur.val + "(";
+            if (cur.random == null) {
+                s = s + "null";
+            } else {
+                s = s + cur.random.val;
+            }
+            s = s + ")";
+            if (cur.next != null) {
+                s = s + "->";
+            }
+            cur = cur.next;
+        }
+        return s;
     }
 
     public static void main(String[] args) {
-        Node a = new Node(7), b = new Node(13), c = new Node(11), d = new Node(10), e = new Node(1);
-        a.next = b; b.next = c; c.next = d; d.next = e;
-        b.random = a; c.random = e; d.random = c; e.random = a;
+        Node a = new Node(7);
+        Node b = new Node(13);
+        Node c = new Node(11);
+        Node d = new Node(10);
+        Node e = new Node(1);
+        a.next = b;
+        b.next = c;
+        c.next = d;
+        d.next = e;
+        b.random = a;
+        c.random = e;
+        d.random = c;
+        e.random = a;
+
         String before = describe(a);
         Node copy = copyRandomList(a);
         System.out.println(describe(copy));                                  // 7(null)->13(7)->11(1)->10(11)->1(7)
@@ -62,9 +119,10 @@ public class CopyListWithRandomPointer {
         System.out.println(copy != a && copy.next != a.next);                // true: these are NEW nodes
         System.out.println(describe(copyRandomListMap(a)));                  // same structure via the map approach
         System.out.println(describe(copyRandomList(null)));                  // null
+
         Node one = new Node(5);
         one.random = one;
         Node c1 = copyRandomList(one);
-        System.out.println(c1.random == c1 && c1 != one);                    // true (self random pointer)
+        System.out.println(c1.random == c1 && c1 != one);                    // true (random points to itself)
     }
 }
